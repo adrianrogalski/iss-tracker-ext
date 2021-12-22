@@ -1,5 +1,4 @@
 package service;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import model.Event;
@@ -7,7 +6,6 @@ import model.EventDto;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-
 import java.util.*;
 
 public class LogInterfaceApi implements LogInterface {
@@ -44,37 +42,33 @@ public class LogInterfaceApi implements LogInterface {
         if (!eventDto.getExtras().isEmpty()) {
             event.setExtras(eventDto.getExtras());
         }
-        calculateDuration(eventDto, event);
+        calculateDurationAndSave(eventDto, event);
         return event;
     }
 
-    private boolean calculateDuration(EventDto eventDto, Event entity) {
+    private boolean calculateDurationAndSave(EventDto eventDto, Event event) {
         if (events.containsKey(eventDto.getId())) {
-            final EventDto event = events.get(eventDto.getId());
+            final EventDto foundEventDto = events.get(eventDto.getId());
             final Long time1 = Long.valueOf(eventDto.getTimestamp());
-            final Long time2 = Long.valueOf(event.getTimestamp());
+            final Long time2 = Long.valueOf(foundEventDto.getTimestamp());
             Long duration = time1 - time2;
             if (duration < 0) {
                 duration = -duration;
             }
             if (duration > 4) {
-                entity.setLongEvent(true);
+                event.setLongEvent(true);
             }
-            entity.setDuration(duration);
+            event.setDuration(duration);
             events.remove(eventDto.getId());
-            save(entity);
+            Transaction transaction = session.beginTransaction();
+            session.save(event);
+            transaction.commit();
             return true;
         }
         else {
             events.put(eventDto.getId(), eventDto);
             return false;
         }
-    }
-
-    private void save(Event event) {
-        Transaction transaction = session.beginTransaction();
-        session.save(event);
-        transaction.commit();
     }
 }
 
