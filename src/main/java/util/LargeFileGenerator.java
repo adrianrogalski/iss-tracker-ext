@@ -8,8 +8,8 @@ import java.io.IOException;
 public class LargeFileGenerator {
     public static void main(String[] args) throws IOException {
         File file = new File("test.txt");
-        String sampleText = "{\"id\":\"scsmbstgra\", \"state\":\"STARTED\", \"type\":\"APPLICATION_LOG\", \"host\":\"12345\", \"timestamp\":1491377495212}\n{\"id\":\"scsmbstgrb\", \"state\":\"STARTED\", \"timestamp\":1491377495213}\n";
-        for (int i = 0; i < 22; i++) {
+        String sampleText = "{\"id\":\"scsmbstgra\", \"state\":\"STARTED\", \"type\":\"APPLICATION_LOG\", \"host\":\"12345\", \"timestamp\":1491377495212}\n{\"id\":\"scsmbstgrb\", \"state\":\"STARTED\", \"timestamp\":1491377495213}\n{\"id\":\"scsmbstgrb\", \"state\":\"FINISHED\", \"timestamp\":1491377495218}\n{\"id\":\"scsmbstgra\", \"state\":\"FINISHED\", \"type\":\"APPLICATION_LOG\", \"host\":\"12345\", \"timestamp\":1491377495220}\n";
+        for (int i = 0; i < 19; i++) {
             FileWriter writer = new FileWriter(file);
             BufferedWriter writer1 = new BufferedWriter(writer);
             sampleText = sampleText.concat(sampleText);
