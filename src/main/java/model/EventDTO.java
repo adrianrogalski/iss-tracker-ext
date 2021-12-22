@@ -12,7 +12,7 @@ import java.util.Map;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class FileDTO {
+public class EventDTO {
     @JsonProperty("id")
     private String id;
     @JsonProperty("state")

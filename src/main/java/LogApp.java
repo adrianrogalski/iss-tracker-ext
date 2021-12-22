@@ -1,6 +1,6 @@
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import model.FileDTO;
+import model.EventDTO;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -16,12 +16,12 @@ public class LogApp {
         File file = new File(path);
         Scanner scanner = new Scanner(file);
         List<String> jsonStringEvents = new LinkedList<>();
-        List<FileDTO> events = new LinkedList<>();
+        List<EventDTO> events = new LinkedList<>();
         while(scanner.hasNextLine()) {
             final String jsonStringEvent = scanner.nextLine();
             jsonStringEvents.add(jsonStringEvent);
-            final FileDTO fileDTO = mapper.readValue(jsonStringEvent, FileDTO.class);
-            events.add(fileDTO);
+            final EventDTO eventDTO = mapper.readValue(jsonStringEvent, EventDTO.class);
+            events.add(eventDTO);
         }
         jsonStringEvents.forEach(System.out::println);
         events.forEach(System.out::println);
