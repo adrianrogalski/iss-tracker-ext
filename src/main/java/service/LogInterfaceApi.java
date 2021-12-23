@@ -34,16 +34,6 @@ public class LogInterfaceApi implements LogInterface {
         session.close();
     }
 
-    private Event createEventEntityFrom(EventDto eventDto) {
-        Event event = new Event();
-        event.setEventId(eventDto.getId());
-        if (!eventDto.getExtras().isEmpty()) {
-            event.setExtras(eventDto.getExtras());
-        }
-        calculateDurationAndSave(eventDto, event);
-        return event;
-    }
-
     private boolean calculateDurationAndSave(EventDto eventDto, Event event) {
         if (events.containsKey(eventDto.getId())) {
             final EventDto foundEventDto = events.get(eventDto.getId());
