@@ -8,6 +8,6 @@ import model.EventDto;
 import java.util.Scanner;
 
 public interface LogInterface  {
-    boolean saveIntoDb(Scanner scanner, ObjectMapper mapper) throws JsonProcessingException;
+    Event saveIntoDb(EventDto eventDto) throws JsonProcessingException;
     void readFromDatabase();
 }

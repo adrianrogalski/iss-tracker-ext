@@ -1,37 +1,35 @@
 package service;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import model.Event;
 import model.EventDto;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+
 import java.util.*;
 
 public class LogInterfaceApi implements LogInterface {
     private final SessionFactory factory;
-    private final Map<String, EventDto> events = new HashMap<>();
-    private Session session;
-    public LogInterfaceApi(SessionFactory factory) {
+    private final Map<String, EventDto> events;
+    public LogInterfaceApi(SessionFactory factory, Map<String, EventDto> events) {
         this.factory = factory;
+        this.events = events;
     }
 
     @Override
-    public boolean saveIntoDb(Scanner scanner, ObjectMapper mapper) throws JsonProcessingException {
-        session = factory.openSession();
-        EventDto eventDto;
-        while(scanner.hasNextLine()) {
-            String jsonStringEvent = scanner.nextLine();
-            eventDto = EventDto.of(jsonStringEvent, mapper);
-            createEventEntityFrom(eventDto);
+    public Event saveIntoDb(EventDto eventDto) throws JsonProcessingException {
+        Event event = new Event();
+        event.setEventId(eventDto.getId());
+        if (!eventDto.getExtras().isEmpty()) {
+            event.setExtras(eventDto.getExtras());
         }
-        session.close();
-        return true;
+        calculateDurationAndSave(eventDto, event);
+        return event;
     }
 
     @Override
     public void readFromDatabase() {
-        session = factory.openSession();
+        final Session session = factory.openSession();
         session.createQuery("from Event", Event.class).getResultList().forEach(System.out::println);
         session.close();
     }
@@ -60,9 +58,11 @@ public class LogInterfaceApi implements LogInterface {
             }
             event.setDuration(duration);
             events.remove(eventDto.getId());
+            Session session = factory.openSession();
             Transaction transaction = session.beginTransaction();
             session.save(event);
             transaction.commit();
+            session.close();
             return true;
         }
         else {
